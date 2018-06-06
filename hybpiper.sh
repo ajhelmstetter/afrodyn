@@ -21,9 +21,8 @@
 #$ -q bioinfo.q
 
 # Nom du job
-#$ -N hybpiper_paralog_test
+#$ -N hybpiper
 ############################################################
-# hybpiper pipeline test
 
 ###################################################
 #### 0 Preparation of files and transfer to cluster
@@ -37,20 +36,20 @@
 #Annonaceae_nuc_exons.fa
 #Annonaceae_pep_exons.pep
 #namelist.txt #### namelist contains the sample names that will be analysed
-path_to_dir_in="/home/helmstetter/data/hybpiper";
+path_to_dir_in="/home/helmstetter/hybpiper/data";
 
-#this is where the hybpiper folder is located
-path_to_hybpiper="/home/helmstetter/programs/HybPiper";
+#this is where the hybpiper folder is located after download
+#https://github.com/mossmatters/HybPiper
+path_to_hybpiper="/home/helmstetter/hybpiper/program";
 
-#This folder contains scripts for running intronerate
+#The 'scripts' folder contains scripts for running intronerate
 #and generating summary stats:
 #hybpiper_stats.sh
 #intronerate.sh
 #get_seq_lengths.sh
-path_to_scripts="/home/helmstetter/scripts";
+path_to_scripts="/home/helmstetter/hybpiper/scripts";
 path_to_dir_out="/home/helmstetter/output/$JOB_ID/";
 path_to_tmp="/scratch/helmstetter_$JOB_ID";
-
 
 #make temporary directory to store files/run analyses in
 echo "copying files";
@@ -62,30 +61,21 @@ scp nas:/$path_to_dir_in/* $path_to_tmp
 #Copy all raw fastq files needed
 #Change appropriately for the files that are required
 echo "copying fastqs";
-#scp nas2:/data/projects/afrodyn/RUN62_HISEQ/paired/INDEX06/* $path_to_tmp
-#scp nas2:/data/projects/afrodyn/RUN62_HISEQ/paired/INDEX10/* $path_to_tmp
+
 scp nas2:/data/projects/afrodyn/RUN62_HISEQ/paired/INDEX12/* $path_to_tmp
 
-#scp nas2:/data/projects/afrodyn/RUN52/paired/trimtfiltcutR52-TAG-71* $path_to_tmp
-#
-#scp nas2:/data/projects/afrodyn/RUN60_HISEQ/paired/trimtfiltcutRUN60_HISEQ-INDEX02-TAG-62* $path_to_tmp
-#scp nas2:/data/projects/afrodyn/RUN60_HISEQ/paired/trimtfiltcutRUN60_HISEQ-INDEX02-TAG-7* $path_to_tmp
-#scp nas2:/data/projects/afrodyn/RUN60_HISEQ/paired/trimtfiltcutRUN60_HISEQ-INDEX01-TAG-11* $path_to_tmp
-#scp nas2:/data/projects/afrodyn/RUN60_HISEQ/paired/trimtfiltcutRUN60_HISEQ-INDEX08-TAG-26* $path_to_tmp
-#scp nas2:/data/projects/afrodyn/RUN60_HISEQ/paired/trimtfiltcutRUN60_HISEQ-INDEX08-TAG-13* $path_to_tmp
-#scp nas2:/data/projects/afrodyn/RUN60_HISEQ/paired/trimtfiltcutRUN60_HISEQ-INDEX08-TAG-31* $path_to_tmp
+scp nas2:/data/projects/afrodyn/RUN52/paired/trimtfiltcutR52-TAG-71* $path_to_tmp
+
+scp nas2:/data/projects/afrodyn/RUN60_HISEQ/paired/trimtfiltcutRUN60_HISEQ-INDEX02-TAG-62* $path_to_tmp
 echo "done copying fastqs";
 
 #Copy scripts that are used in the pipeline to temporary folder
 echo "copying scripts";
+
 #copy all hybpiper python scripts
-scp nas:/$path_to_hybpiper/*.py $path_to_tmp   ############ Modifier nas/nas2
+scp nas:/$path_to_hybpiper/*.py $path_to_tmp
 
 #Copy shell scripts
-#Make sure this folder has:
-#get_seq_lengths.sh
-#hybpiper_stats.sh
-#intronerate.sh
 scp nas:/$path_to_scripts/*.sh $path_to_tmp
 echo "done copying scripts";
 
@@ -95,12 +85,14 @@ echo "done copying all files";
 cd $path_to_tmp
 
 #Gunzip files
+#takes a while if you have many
 echo "gunzipping files"
 gunzip *fastq.gz
 echo "done gunzipping files"
 
 #Renames to the format e.g.I04_T44_R1
 #made need to change patterns depending on run used
+#this rename works on IRD cluster but different linux OS may require changes
 echo "renaming files"
 rename -v 'trimtfiltcutRUN62_HISEQ_INDEX' 'I' *
 rename -v 'trimtfiltcutRUN60_HISEQ-INDEX' 'I' *
@@ -109,13 +101,7 @@ rename -v -- '-TAG-' '_T' *
 rename -v '_paired' '' *
 echo "done renaming files"
 
-#Return to home directory
-cd ~
-
-####
 #load modules
-####
-
 module load bioinfo/SPAdes
 
 ###################################################
@@ -139,7 +125,7 @@ echo "done reads_first";
 
 # Runs the get_seq_lengths.py and hybpiper_stats.py parts of the hybpiper pipeline
 # seem to need to be run in the directory with reads_first.py output
-# so change directory to $path_to_tmp before running
+# so make sure directory is $path_to_tmp before running
 
 cd $path_to_tmp
 
@@ -150,7 +136,6 @@ bash hybpiper_stats.sh
 ###################################################
 
 # runs intronerate.py and cleanup.py
-
 bash intronerate.sh
 
 ####################################################
@@ -162,16 +147,16 @@ do
 echo $i
 python ./paralog_investigator.py $i
 done < namelist.txt
-#
+
 ####################################################
 ##### 5 Retrieve sequences
 ####################################################
 
-# creates folders and runs retrieve_sequences.py for output of exons (retrieved_dna)
+# creates folders and runs retrieve_sequences.py for output of exons (retrieved_exons)
 # introns (retrieved_introns) and supercontigs (retrieved_supercontigs) 
 # moves files to relevant folders
 
-mkdir retrieved_dna
+mkdir retrieved_exons
 python retrieve_sequences.py Annonaceae_nuc_exons.fa . dna
 mv *.FNA retrieved_dna/
 
@@ -183,7 +168,8 @@ mkdir retrieved_supercontigs
 python retrieve_sequences.py Annonaceae_nuc_exons.fa . supercontig
 mv *.fasta retrieved_supercontigs/
 
-
+#This keeps all files related to paralog warnings
+#Makes some weird directories and probably could be improved, but it works
 find . -name '*para*' >> para.txt
 
 mkdir retrieved_par
@@ -192,21 +178,19 @@ do
 mkdir -p retrieved_par/$i && cp $i retrieved_par/$i
 done < para.txt
 
-#move back to home directory
-cd ~
-
 ##################################################
 #### 6 clean up and transfer
 ##################################################
 
-#Transfert des donnees du noeud vers master
-
 echo "Transfert data node -> master";
+
+#move back to home directory
+cd ~
 
 #make output folder in home directory
 mkdir $path_to_dir_out
 
-#remove fastq files
+#fastq files can take up a lot of space so you may want to remove them
 #rm $path_to_tmp/*.fastq
 
 #Copies statistics and retrieved sequences to output folder in home directory
@@ -219,10 +203,6 @@ scp -rp $path_to_tmp/retrieved_par/ nas:/$path_to_dir_out/
 #copy everything, for testing
 #scp -rp $path_to_tmp/* nas:/$path_to_dir_out/
 
-# Originally copied all output files but these were too big/many as below:
-# scp -rp $path_to_tmp/I0* nas:/$path_to_dir_out/
-# could move these to nas2 instead if need to store
-
 echo "done moving";
 
 #### Delete all data on node to keep space free
@@ -230,4 +210,3 @@ echo "done moving";
 echo "Deleting data on node";
 rm -rf $path_to_tmp
 echo "Done deleting, FINISHED!";
-
