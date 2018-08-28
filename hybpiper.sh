@@ -129,6 +129,8 @@ echo "done reads_first";
 
 cd $path_to_tmp
 
+#this script uses the reference fasta
+#so if the reference is changed it must be changed in this script as well 
 bash hybpiper_stats.sh
 
 ###################################################
