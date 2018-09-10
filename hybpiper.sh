@@ -63,10 +63,9 @@ scp nas:/$path_to_dir_in/* $path_to_tmp
 echo "copying fastqs";
 
 scp nas2:/data/projects/afrodyn/RUN62_HISEQ/paired/INDEX12/* $path_to_tmp
-
 scp nas2:/data/projects/afrodyn/RUN52/paired/trimtfiltcutR52-TAG-71* $path_to_tmp
-
 scp nas2:/data/projects/afrodyn/RUN60_HISEQ/paired/trimtfiltcutRUN60_HISEQ-INDEX02-TAG-62* $path_to_tmp
+
 echo "done copying fastqs";
 
 #Copy scripts that are used in the pipeline to temporary folder
