@@ -70,6 +70,8 @@ Place this file in the **data** folder
 
 The reference must be placed in the hybpiper.sh script as well. Open up hybpiper.sh with a text editor and find & replace "Annonaceae_nuc_exons.fa" with the name of your reference file.
 
+Now you should be able to **run hybpiper.sh**
+
 This script will produce stats files for the run and four folders containing exons, introns, supercontigs and one folder with the results of the paralog checks.
 
 ### post_hybpiper.sh
