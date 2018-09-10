@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# This script must be run in the "retrieved_supercontigs" directory after hybpiper finishes
+# First the script makes fasta sequences on oneline
+# then it removes exon names from fasta headers
+
 ls -1 ./ | \
 while read sample; \
 do 

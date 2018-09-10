@@ -62,6 +62,10 @@ scp nas:/$path_to_dir_in/* $path_to_tmp
 #Change appropriately for the files that are required
 echo "copying fastqs";
 
+############################
+# INSERT PATHS TO RAW FASTQs 
+############################
+
 scp nas2:/data/projects/afrodyn/RUN62_HISEQ/paired/INDEX12/* $path_to_tmp
 scp nas2:/data/projects/afrodyn/RUN52/paired/trimtfiltcutR52-TAG-71* $path_to_tmp
 scp nas2:/data/projects/afrodyn/RUN60_HISEQ/paired/trimtfiltcutRUN60_HISEQ-INDEX02-TAG-62* $path_to_tmp
@@ -76,6 +80,7 @@ scp nas:/$path_to_hybpiper/*.py $path_to_tmp
 
 #Copy shell scripts
 scp nas:/$path_to_scripts/*.sh $path_to_tmp
+
 echo "done copying scripts";
 
 echo "done copying all files";
@@ -159,7 +164,7 @@ done < namelist.txt
 
 mkdir retrieved_exons
 python retrieve_sequences.py Annonaceae_nuc_exons.fa . dna
-mv *.FNA retrieved_dna/
+mv *.FNA retrieved_exons/
 
 mkdir retrieved_introns
 python retrieve_sequences.py Annonaceae_nuc_exons.fa . intron

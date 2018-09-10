@@ -31,13 +31,17 @@
 #### Make variables with paths to directories
 #Always use these paths when writing paths to files otherwise it will try to take them from your home directory
 
-#Input directory must contain ONLY the HybPiper output fastas.
-#Ensure formatted is correct (supercontigs introduce exon names into headers which can cause problems downstream)
+# Input directory must contain ONLY the HybPiper output fastas
+# path should be "/home/ACCOUNT/HYBPIPER_OUT_FOLDER/retrieved_supercontigs/oneline/header"
+# past in to path_to_dir_in
+# Ensure formatted is correct (supercontigs introduce exon names into headers which can cause problems downstream)
 path_to_dir_in="/home/helmstetter/hybpiper_fam_1493584/retrieved_supercontigs/oneline/header";
+
+# change output folder name
 path_to_dir_out="/home/helmstetter/align_fam_$JOB_ID/";
+
 path_to_tmp="/scratch/helmstetter_$JOB_ID/";
 	
-
 #### Create folders on node 
 echo "Transfering files to node";
 mkdir $path_to_tmp
