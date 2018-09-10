@@ -8,12 +8,12 @@ Nom du job **-N** and **path_to_dir_out** should be changed for each run of the 
 
 ```bash
 # Nom du job
-#$ -N hybpiper
+#$ -N hybpiper_annonaceae
 ############################################################
 ```
 
 ```bash
-path_to_dir_out="/home/helmstetter/output/$JOB_ID/";
+path_to_dir_out="/home/helmstetter/output/annonaceae_$JOB_ID/";
 ```
 
 scp filepaths to raw fastqs you want to analyse must be changed. These files need to be renamed to the pattern I01_T59_R1.fastq.gz. I01 is the index or run name, T59 is the individual tag and R1 specifies read one or read two. 
