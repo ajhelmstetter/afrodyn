@@ -6,6 +6,16 @@ Scripts and files for AFRODYN analyses
 
 Nom du job **-N** and **path_to_dir_out** should be changed for each run of the script so you know what is contained in the output folder
 
+```bash
+# Nom du job
+#$ -N hybpiper
+############################################################
+```
+
+```bash
+path_to_dir_out="/home/helmstetter/output/$JOB_ID/";
+```
+
 scp filepaths to raw fastqs you want to analyse must be changed. These files need to be renamed to the pattern I01_T59_R1.fastq.gz. I01 is the index or run name, T59 is the individual tag and R1 specifies read one or read two. 
 
 Renaming should be modified to get rid of the prefixes in your fastq filenames. An example is below
