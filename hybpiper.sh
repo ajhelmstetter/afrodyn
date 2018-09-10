@@ -114,7 +114,7 @@ module load bioinfo/SPAdes
 
 echo "starting reads_first";
 
-mv $path_to_tmp/namelist_i12t85.txt $path_to_tmp/namelist.txt
+mv $path_to_tmp/namelist_GROUPNAME.txt $path_to_tmp/namelist.txt
 
 #A loop that reads names of samples in namelist and runs reads_first.py part of the hybpiper pipeline
 while read name; 
