@@ -62,9 +62,9 @@ scp nas:/$path_to_dir_in/* $path_to_tmp
 #Change appropriately for the files that are required
 echo "copying fastqs";
 
-############################
-# INSERT PATHS TO RAW FASTQs 
-############################
+##############################
+# INSERT PATHS TO RAW FASTQs #
+##############################
 
 scp nas2:/data/projects/afrodyn/RUN62_HISEQ/paired/INDEX12/* $path_to_tmp
 scp nas2:/data/projects/afrodyn/RUN52/paired/trimtfiltcutR52-TAG-71* $path_to_tmp
