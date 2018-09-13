@@ -138,7 +138,7 @@ Go into your *retrieved_supercontigs* folder and run post_hybpiper.sh to modify 
 
 Download the *test_seq_lengths.txt* file from your output folder and run 75_75.R using this file
 
-## 2 Identify and remove paralogs
+## 2 IDENTIFY AND REMOVE PARALOGS
 
 ### 2.1 Run paralogs.sh
 
@@ -178,7 +178,7 @@ DN46758_53315_Q8GYI7
 DN48456_94114_Q9SUV4
 DN54538_77622_Q85B45
 ```
-## 3 Align sequences
+## 3 SEQUENCE ALIGNMENT
 
 ### 3.1 Run align.sh
 
@@ -201,7 +201,7 @@ bash "~/scripts/post_align.sh"
 cd gblocks/
 ```
 
-## 4 Infer gene trees for each locus
+## 4 INFER GENE TREES AND RUN ASTRAL
 
 ### 4.1 Run genetrees.sh
 
@@ -329,7 +329,7 @@ python2.7 taxon_name_subst.py sub_table.txt astral_fam_1493813_bs10_LR.tre
 
 Be amazed at your taxonomic insights using Figtree
 
-## 5 Build a concatenated RAxML tree
+## 5 INFER CONCATENATED RAxML TREE
 
 ### 5.1 Select 75_75 loci
 
