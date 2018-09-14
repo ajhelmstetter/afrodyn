@@ -51,10 +51,27 @@ Read through the *hybpiper.sh* script before the next steps to ensure you unders
 Make sure these paths are correct on your machine:
 
 ```bash
-path_to_dir_in="/home/helmstetter/data/hybpiper";
-path_to_hybpiper="/home/helmstetter/programs/HybPiper";
-path_to_scripts="/home/helmstetter/scripts";
-path_to_dir_out="/home/helmstetter/hybpiper_green_pipto_$JOB_ID/";
+#Files that are in $path_to_dir_in:
+#Reference file e.g. Annonaceae_nuc_exons.fa
+#namelist.txt (section 1.3)
+#namelist contains the sample names that will be analysed
+path_to_dir_in="/home/helmstetter/afrodyn/hybpiper/data";
+
+#this is where the hybpiper folder is located after download
+#https://github.com/mossmatters/HybPiper
+path_to_hybpiper="/home/helmstetter/afrodyn/hybpiper/program";
+
+#The 'scripts' folder contains scripts for running intronerate
+#and generating summary stats:
+#hybpiper_stats.sh
+#intronerate.sh
+#get_seq_lengths.sh
+path_to_scripts="/home/helmstetter/afrodyn/hybpiper/scripts";
+
+#output folder
+path_to_dir_out="/home/helmstetter/output/$JOB_ID/";
+
+#temporary folder (intermediate files)
 path_to_tmp="/scratch/helmstetter_$JOB_ID";
 ```
 

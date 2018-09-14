@@ -33,8 +33,8 @@
 # change depending on who is using the script/what data is being used
 
 #Files that are in $path_to_dir_in:
+#Reference file
 #Annonaceae_nuc_exons.fa
-#Annonaceae_pep_exons.pep
 #namelist.txt #### namelist contains the sample names that will be analysed
 path_to_dir_in="/home/helmstetter/hybpiper/data";
 
@@ -48,7 +48,11 @@ path_to_hybpiper="/home/helmstetter/hybpiper/program";
 #intronerate.sh
 #get_seq_lengths.sh
 path_to_scripts="/home/helmstetter/hybpiper/scripts";
+
+#output folder
 path_to_dir_out="/home/helmstetter/output/$JOB_ID/";
+
+#temporary folder (intermediate files)
 path_to_tmp="/scratch/helmstetter_$JOB_ID";
 
 #make temporary directory to store files/run analyses in
