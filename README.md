@@ -28,17 +28,35 @@ align.sh
 genetrees.sh
 concat.sh
 
-### 0.3 Install nw_ed and ASTRAL
+### 0.3 Install prerequisites
 
-### 0.4 Install pxcat
+nw_ed:
 
-TBD
+http://cegg.unige.ch/newick_utils
+
+ASTRAL:
+
+https://github.com/smirarab/ASTRAL
+
+phyx:
+
+https://github.com/FePhyFoFum/phyx
 
 ## 1 RUN HYBPIPER
 
 Read through the *hybpiper.sh* script before the next steps to ensure you understand the requirements
 
 ### 1.1 Edit filepaths of input fastqs
+
+Make sure these paths are correct on your machine:
+
+```bash
+path_to_dir_in="/home/helmstetter/data/hybpiper";
+path_to_hybpiper="/home/helmstetter/programs/HybPiper";
+path_to_scripts="/home/helmstetter/scripts";
+path_to_dir_out="/home/helmstetter/hybpiper_green_pipto_$JOB_ID/";
+path_to_tmp="/scratch/helmstetter_$JOB_ID";
+```
 
 Replace this seciton with the full filepaths of your input fastqs:
 
@@ -160,11 +178,11 @@ Use R script plot_paralogs.R to plot trees and examine by eye. You are looking f
 
 Here is an example of a tree suggestive of paralogy
 
-![alt text](./paralog.png "Example of paralogous locus")
+![alt text](./images/paralog.png "Example of paralogous locus")
 
 Here is an example of an incorrect flag by hybpipers paralog detection algorithm
 
-![alt text](./not_paralog.png "Example of non-paralogous locus")
+![alt text](./images/not_paralog.png "Example of non-paralogous locus")
 
 Make a list of the names of exons that show paralogy as follows
 
