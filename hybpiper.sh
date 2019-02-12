@@ -44,7 +44,7 @@ path_to_hybpiper="/home/helmstetter/hybpiper/program";
 
 #The 'scripts' folder contains scripts for running intronerate
 #and generating summary stats:
-#hybpiper_stats.sh
+#hybpiper_stats.sh OR hybpiper_stats_palm.sh if working with palms 
 #intronerate.sh
 #get_seq_lengths.sh
 path_to_scripts="/home/helmstetter/hybpiper/scripts";

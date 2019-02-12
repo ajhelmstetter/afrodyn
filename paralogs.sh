@@ -21,7 +21,7 @@
 #$ -q bioinfo.q
 
 # Nom du job
-#$ -N paralog_anon
+#$ -N paralog_dated
 ############################################################
 
 # phylogeny with RAxML
@@ -38,8 +38,8 @@
 #no duplicate taxa
 
 #recommend changing output directory depending on input dataset
-path_to_dir_in="/home/helmstetter/hybpiper_annonidium_1371242/retrieved_par";
-path_to_dir_out="/home/helmstetter/raxml_paralog_anon_$JOB_ID/";
+path_to_dir_in="/data3/projects/AFRODYN2/hybpiper_dated_1535667/retrieved_par";
+path_to_dir_out="/home/helmstetter/paralog_dated_$JOB_ID/";
 path_to_tmp="/scratch/helmstetter_$JOB_ID";
 
 #### Creation du repertoire temporaire sur noeud
@@ -47,7 +47,7 @@ path_to_tmp="/scratch/helmstetter_$JOB_ID";
 echo "Transferring data to node";
 
 mkdir $path_to_tmp
-scp -rp nas:/$path_to_dir_in/* $path_to_tmp   ############ Modifier nas/nas2
+scp -rp /$path_to_dir_in/* $path_to_tmp   ############ Modifier nas/nas2
 ls $path_to_tmp
 
 echo "done copying files";
