@@ -179,7 +179,7 @@ Download the *test_seq_lengths.txt* file from your output folder and run 75_75.R
 
 For some reason, hybpiper detects no paralogs when using the palm reference where exons have been merged into genes. Hybpiper will need to be rerun with the reference where the exons are split (palms.exons_split.final.fasta). Remember to change the name of the reference in hybpiper.sh and hybpiper_stats.sh
 
-After which, step 2 can be run as normal.
+After which, step 2 can be run as normal using the hybpiper output from the second run, where exons are split.
 
 ### 2.1 Run paralogs.sh
 
@@ -222,7 +222,9 @@ DN54538_77622_Q85B45
 ```
 ### 2.2.1 PALMS ONLY
 
-Paralogy will be detected on individual exons. In order to assess whether a *gene* is paralogous, I suggest you look at the proportion of verified paralogs vs non-paralogs for each gene. If paralog proportion is higher than 50%, treat the gene as a true paralog and remove.
+Paralogy will be detected on individual exons. In order to assess whether a *gene* is paralogous, I suggest you look at the proportion of verified paralogs vs non-paralogs for each gene. If paralog proportion is higher than 50%, treat the gene as a true paralog and remove this locus from the *gene* hybpiper run.
+
+Continue using the *gene* hybpiper run for the remaining steps.
 
 
 ## 3 SEQUENCE ALIGNMENT
