@@ -57,6 +57,7 @@ module load bioinfo/mafft/7.305
 
 cd $path_to_tmp
 
+
 #Previously par_table.sh 
 #Finds all genes with warnings from hybpiper run and makes a list 
 
@@ -73,9 +74,14 @@ echo $i >> para_table.txt
 echo -e "\n" >> para_table.txt
 done < par_list.txt
 
+cat para_table.txt | cut -f1 -d"." > para_table_temp.txt
+
+mv para_table_temp.txt para_table.txt
+
 sed -i '/^$/d' para_table.txt
 
-cat para_table.txt | sort -f | uniq > loci_list.txt
+cat para_table.txt | sort -f | uniq | grep -v ".txt" > loci_list.txt
+
 
 while read i
 do
