@@ -177,7 +177,7 @@ Download the *test_seq_lengths.txt* file from your output folder and run 75_75.R
 
 ### 2.1 Run paralogs.sh
 
-In your hybpiper output folder, enter *retrieved_par* and run paralogs.sh
+In your hybpiper output folder, enter *retrieved_par* and run par_table.sh
 
 ### 2.2 Examine and identify paralogous loci
 
