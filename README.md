@@ -183,7 +183,7 @@ After which, step 2 can be run as normal using the hybpiper output from the seco
 
 ### 2.1 Run paralogs.sh
 
-In your hybpiper output folder, enter *retrieved_par* and run par_table.sh
+Change the relevant filepaths to correspond to your hybpiper run, and run paralogs.sh, using 8 cores.
 
 ### 2.2 Examine and identify paralogous loci
 
