@@ -226,6 +226,35 @@ Paralogy will be detected on individual exons. In order to assess whether a *gen
 
 Continue using the *gene* hybpiper run for the remaining steps.
 
+### 2.3 Verifying paralogs haven't been missed
+
+A file called "loci_list.txt" is output by paralogs.sh. This file contains a list of all of the loci that are putatively paralogous. Sometimes lines will end with a filepath or not e.g.
+
+```bash
+DN11525_9850_Q9M9Q2 #important that at least one line without paralogs is present
+DN11525_9850_Q9M9Q2./I01_T19/genes_with_paralog_warnings.txt/genes_with_paralog_warnings.txt
+DN11525_9850_Q9M9Q2./I01_T22/genes_with_paralog_warnings.txt/genes_with_paralog_warnings.txt
+DN11525_9850_Q9M9Q2./I01_T26/genes_with_paralog_warnings.txt/genes_with_paralog_warnings.txt
+DN11525_9850_Q9M9Q2./I01_T36/genes_with_paralog_warnings.txt/genes_with_paralog_warnings.txt
+DN11525_9850_Q9M9Q2./I01_T59/genes_with_paralog_warnings.txt/genes_with_paralog_warnings.txt
+DN11525_9850_Q9M9Q2./I02_T28/genes_with_paralog_warnings.txt/genes_with_paralog_warnings.txt
+DN11525_9850_Q9M9Q2./I02_T56/genes_with_paralog_warnings.txt/genes_with_paralog_warnings.txt
+DN11525_9850_Q9M9Q2./I06_T59/genes_with_paralog_warnings.txt/genes_with_paralog_warnings.txt
+DN11525_9850_Q9M9Q2./I10_T15/genes_with_paralog_warnings.txt/genes_with_paralog_warnings.txt
+DN11525_9850_Q9M9Q2./I10_T18/genes_with_paralog_warnings.txt/genes_with_paralog_warnings.txt
+DN11525_9850_Q9M9Q2./I10_T51/genes_with_paralog_warnings.txt/genes_with_paralog_warnings.txt
+DN11525_9850_Q9M9Q2./I10_T59/genes_with_paralog_warnings.txt/genes_with_paralog_warnings.txt
+DN11525_9850_Q9M9Q2./I10_T62/genes_with_paralog_warnings.txt/genes_with_paralog_warnings.txt
+```
+It is important that at least one line with only the name of the locus e.g. the top line in the example above is present.
+
+If not, the script will not be able to locate the locus and therefore not remove the paralog.
+
+If you find a case where there is a file path on each line, have a look at how many times paralogs were detected in that locus. Typically it is less than 4, so you would not have enough information to consider this as a paralog anyway.
+
+This should be the number of times the exon name occurs in "loci_list.txt" but can also be confirmed by looking at the hybpiper log file and how many times the exon is flagged as a paralog. 
+
+Otherwise, the locus can be manually removed/added to the list of paralogs at a later stage.
 
 ## 3 SEQUENCE ALIGNMENT
 
