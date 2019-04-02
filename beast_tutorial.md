@@ -2,14 +2,13 @@
 
 ## Data preparation
 
-75_75 list
+Start with alignments of 75_75 loci, paralogs removed.
 
 ### Build genetrees
 
-as in hybpiper
+As in Hybpiper using the genetrees.sh script
 
 ### Calculating root-to-tip variance
-
 
 scripts downloadable at:
 
