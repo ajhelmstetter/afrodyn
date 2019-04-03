@@ -279,12 +279,6 @@ bash "~/scripts/post_align.sh"
 cd gblocks/
 ```
 
-### 3.3 Combine exons (PALMS ONLY)
-
-combine_exon.sh
-
-To be completed...
-
 ## 4 INFER GENE TREES AND RUN ASTRAL
 
 ### 4.1 Run genetrees.sh
