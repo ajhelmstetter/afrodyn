@@ -205,7 +205,7 @@ mkdir $path_to_dir_out
 
 #Copies statistics and retrieved sequences to output folder in home directory
 scp -p $path_to_tmp/*.txt nas:/$path_to_dir_out/
-scp -rp $path_to_tmp/retrieved_dna/ nas:/$path_to_dir_out/
+scp -rp $path_to_tmp/retrieved_exons/ nas:/$path_to_dir_out/
 scp -rp $path_to_tmp/retrieved_introns/ nas:/$path_to_dir_out/
 scp -rp $path_to_tmp/retrieved_supercontigs/ nas:/$path_to_dir_out/
 scp -rp $path_to_tmp/retrieved_par/ nas:/$path_to_dir_out/
