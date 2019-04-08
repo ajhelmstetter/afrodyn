@@ -21,7 +21,7 @@
 #$ -q bioinfo.q
 
 # Nom du job
-#$ -N paralog_dated
+#$ -N paralog_back
 ############################################################
 
 # phylogeny with RAxML
@@ -38,8 +38,8 @@
 #no duplicate taxa
 
 #recommend changing output directory depending on input dataset
-path_to_dir_in="/data3/projects/AFRODYN2/hybpiper_dated_1535667/retrieved_par";
-path_to_dir_out="/home/helmstetter/paralog_dated_$JOB_ID/";
+path_to_dir_in="/data3/projects/AFRODYN2/hybpiper_back_1590007/retrieved_par";
+path_to_dir_out="/home/helmstetter/paralog_back_$JOB_ID/";
 path_to_tmp="/scratch/helmstetter_$JOB_ID";
 
 #### Creation du repertoire temporaire sur noeud
@@ -47,7 +47,7 @@ path_to_tmp="/scratch/helmstetter_$JOB_ID";
 echo "Transferring data to node";
 
 mkdir $path_to_tmp
-scp -rp /$path_to_dir_in/* $path_to_tmp   ############ Modifier nas/nas2
+scp -rp $path_to_dir_in/* $path_to_tmp   ############ Modifier nas/nas2
 ls $path_to_tmp
 
 echo "done copying files";
@@ -56,7 +56,6 @@ module load bioinfo/RAxML/8.2.9
 module load bioinfo/mafft/7.305
 
 cd $path_to_tmp
-
 
 #Previously par_table.sh 
 #Finds all genes with warnings from hybpiper run and makes a list 
@@ -74,14 +73,9 @@ echo $i >> para_table.txt
 echo -e "\n" >> para_table.txt
 done < par_list.txt
 
-cat para_table.txt | cut -f1 -d"." > para_table_temp.txt
-
-mv para_table_temp.txt para_table.txt
-
 sed -i '/^$/d' para_table.txt
 
-cat para_table.txt | sort -f | uniq | grep -v ".txt" > loci_list.txt
-
+cat para_table.txt | sort -f | uniq > loci_list.txt
 
 while read i
 do
@@ -109,7 +103,7 @@ do
 	ls -1 ./ | \
 		while read sample; do
 		  	echo "mafft --auto ${sample} > aligned.${sample}"
-		done | parallel -j12
+		done | parallel -j8
 	
 	echo "done alignment";
 
