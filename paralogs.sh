@@ -99,16 +99,18 @@ do
 
 	cd ${i}_fastas
 	
-	#makes commands for all of the files in the folder and runs them in batches of 12 jobs
+	#makes commands for all of the files in the folder and runs them in batches of jobs
 	ls -1 ./ | \
 		while read sample; do
 		  	echo "mafft --auto ${sample} > aligned.${sample}"
-		done | parallel -j8
+		done | parallel -j8 #change depending on dataset size
 	
 	echo "done alignment";
 
 	echo "starting raxml";
 	
+	#change -T depending on tree size
+	#total cores = -j8 x -T 1 = 8 cores
 	raxmlHPC-PTHREADS -f a -x 12345 -p 12345 -T 1 -# 100 -m GTRGAMMA -O -s ./aligned.combined_${i}.fasta -n ${i}
 	
 	echo "done raxml";
