@@ -109,7 +109,7 @@ do
 
 	echo "starting raxml";
 	
-	raxmlHPC-PTHREADS -f a -x 12345 -p 12345 -T 8 -# 100 -m GTRGAMMA -O -s ./aligned.combined_${i}.fasta -n ${i}
+	raxmlHPC-PTHREADS -f a -x 12345 -p 12345 -T 1 -# 100 -m GTRGAMMA -O -s ./aligned.combined_${i}.fasta -n ${i}
 	
 	echo "done raxml";
 
