@@ -10,16 +10,25 @@ As in Hybpiper using the genetrees.sh script
 
 ### Calculating root-to-tip variance
 
+module load bioinfo/phyx
+
 scripts downloadable at:
 
 https://github.com/FePhyFoFum/SortaDate/blob/master/README.md
+
+```bash
+#in directory with trees
+
+bash ../root.sh 
+```
 
 ```bash
 #root.sh
 
 #!/bin/bash
 
-FILES=*
+#change suffix if needed
+FILES=*.tre
 
 for f in $FILES
 do
@@ -28,11 +37,11 @@ do
 
 	pxrr -t $f -g I12_T93,I12_T94 -r > rooted.$f
 done
+```
 
-cd ..
-
-python  ~/programs/SortaDate-master/src/get_var_length.py 75_75/ --flend .FNA --outf outfolder
-
+```bash
+#when in folder with rooted trees
+python  ~/programs/SortaDate-master/src/get_var_length.py ./ --flend .tre --outf back_roottip.txt
 ```
 
 This will give output table of root-to-tip variance / total length of tree. Sort on root-to-tip variance and choose top 32 least variable loci (most clock-like)
@@ -40,11 +49,25 @@ This will give output table of root-to-tip variance / total length of tree. Sort
 rooted.RAxML_bipartitions.aligned.header.DN11767_10499_Q8L7R3_supercontig.FNA	0.000922119	0.322085
 rooted.RAxML_bipartitions.aligned.header.DN81922_156171_O04648_supercontig.FNA	0.000374027	0.17288
 
+You can then download your output file, open in a spreadsheet editor and sort (ascending) based on the second column (root-to-tip variance).
+
+Copy the names of the top 32 least variable trees and put in a list:
+
+DN11767_10499_Q8L7R3
+DN81922_156171_O04648
+
+Put the top 32 files in a folder:
+
+```bash
+cp *DN80103_66246_O22988* var32/
+cp *DN79971_143901_Q9LJA3* var32/
+```
+
 ### Remove unwanted samples
 
 ```bash
-sed -i '/02_T54/,+1 d' *.FNA
-sed -i '/02_T55/,+1 d' *.FNA
+sed -i '/I02_T54/,+1 d' *.FNA
+sed -i '/I02_T55/,+1 d' *.FNA
 ```
 
 ### Convert FASTA to nexus
@@ -85,19 +108,20 @@ rm *.nexus
 
 Download modeltest-ng
 
+https://github.com/ddarriba/modeltest
+
+Run in folder with fasta alignments
+
+If you get an error saying don't have permission, run:
+
+```bash
+chmod u+x modeltest-ng
+```
+
+to make the file executable
+
 ```bash
 #!/bin/bash
-
-#FILES=*.FNA
-#
-#for f in $FILES
-#do
-#	while read name; 
-#	do 
-#		grep -A1 "$name" >> $FILES.tmp
-#	done < ~/data/anonidium_test/n
-#done
-
 
 ls -1 ./ | \
 while read sample; \
@@ -106,7 +130,6 @@ do \
 	~/programs/modeltest-ng -d nt -i $sample -h ugif -s 3 
 done
 ```
-
 Run the following to find models selected by BIC:
 
 ```bash
