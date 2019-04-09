@@ -2,7 +2,7 @@
 
 ## Data preparation
 
-Start with alignments of 75_75 loci, paralogs removed.
+Start with alignments of 75_75 loci, paralogs removed and filled (5.1-5.3).
 
 ### Build genetrees
 
