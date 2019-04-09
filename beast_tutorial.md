@@ -34,7 +34,7 @@ for f in $FILES
 do
 	echo $f
 	#replace with names of outgroups, in order of distance from focal group (-r)
-
+	# e.g. in this example I12_T93 is further from the ingroup (closer to the root) than I12_T94
 	pxrr -t $f -g I12_T93,I12_T94 -r > rooted.$f
 done
 ```
