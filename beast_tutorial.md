@@ -53,10 +53,12 @@ You can then download your output file, open in a spreadsheet editor and sort (a
 
 Copy the names of the top 32 least variable trees and put in a list:
 
+```
 DN11767_10499_Q8L7R3
 DN81922_156171_O04648
+```
 
-Put the top 32 alignments in a folder:
+Put the 32 alignments with the lowest root-to-tip variation (most clocklike) in a new folder:
 
 ```bash
 cp *DN80103_66246_O22988* var32/
