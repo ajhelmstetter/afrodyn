@@ -6,7 +6,7 @@ Start with alignments of 75_75 loci, paralogs removed and filled (5.1-5.3).
 
 ### Build genetrees
 
-As in Hybpiper using the genetrees.sh script
+As in Hybpiper using the genetrees.sh script. Make sure that paralog tree files are also removed.
 
 ### Calculating root-to-tip variance
 
