@@ -10,17 +10,18 @@ As in Hybpiper using the genetrees.sh script
 
 ### Calculating root-to-tip variance
 
-module load bioinfo/phyx
-
-scripts downloadable at:
+Script for calculating variance is downloadable at:
 
 https://github.com/FePhyFoFum/SortaDate/blob/master/README.md
 
-```bash
-#in directory with trees
 
-bash ../root.sh 
+First we need to root the trees. To run root.sh we must:
+
 ```
+module load bioinfo/phyx
+```
+
+Be sure to edit the script and the outgroups to fit the dataset.
 
 ```bash
 #root.sh
@@ -39,33 +40,49 @@ do
 done
 ```
 
+Run the script in the directory with the tree files
+
+```bash
+bash ../root.sh 
+```
+
+Now that trees are rooted, we can calculate variance. "./" indicates that we are in the directory with the tree files. --flend is the file suffix for your trees. --outf is the outfile name
+
 ```bash
 #when in folder with rooted trees
 python  ~/programs/SortaDate-master/src/get_var_length.py ./ --flend .tre --outf back_roottip.txt
 ```
 
-This will give output table of root-to-tip variance / total length of tree. Sort on root-to-tip variance and choose top 32 least variable loci (most clock-like)
+This will give output tab delimited table of root-to-tip variance / total length of tree. Sort on root-to-tip variance and choose top 32 least variable loci (most clock-like)
 
+```
 rooted.RAxML_bipartitions.aligned.header.DN11767_10499_Q8L7R3_supercontig.FNA	0.000922119	0.322085
 rooted.RAxML_bipartitions.aligned.header.DN81922_156171_O04648_supercontig.FNA	0.000374027	0.17288
+```
 
-You can then download your output file, open in a spreadsheet editor and sort (ascending) based on the second column (root-to-tip variance).
+You can then download the output file, open in a spreadsheet editor and sort (ascending) based on the second column (root-to-tip variance).
 
-Copy the names of the top 32 least variable trees and put in a list:
+Trees that are unrooted will have "NA" in this column, these can be ignored.
+
+Copy the names of the 32 trees with the lowest root-to-tip variation (most clocklike) and paste them into a list, only reserving the exon name stem:
 
 ```
 DN11767_10499_Q8L7R3
 DN81922_156171_O04648
 ```
 
-Put the 32 alignments with the lowest root-to-tip variation (most clocklike) in a new folder:
+Copy the corresponding 32 alignments, which contain the same exon name stem, in a new folder:
 
 ```bash
+mkdir var 32/
+
 cp *DN80103_66246_O22988* var32/
 cp *DN79971_143901_Q9LJA3* var32/
 ```
 
 ### Remove unwanted samples from alignments
+
+If you want to remove particular individuals from a fasta alignment, put their name between the "/"
 
 ```bash
 sed -i '/I02_T54/,+1 d' *.FNA
@@ -74,13 +91,13 @@ sed -i '/I02_T55/,+1 d' *.FNA
 
 ### Convert FASTA to nexus
 
-Use script fasta_to_nexus.sh
+Download PGDSpider: http://www.cmpg.unibe.ch/software/PGDSpider/
 
-download PGDSpider
+BEAST uses nexus format, so we need to convert our fasta alignments.
 
-Open program and make in PGDSpider a .spid file from fasta to nexus 
+Open and make in PGDSpider a .spid file from fasta to nexus format
 
-(attach spid file)
+Edit the filepaths in fasta_to_nexus.sh for the .jar and .spid files and run
 
 ```bash
 #!/bin/bash
@@ -108,19 +125,17 @@ rm *.nexus
 
 ### Model testing
 
-Download modeltest-ng
-
-https://github.com/ddarriba/modeltest
+Download modeltest-ng: https://github.com/ddarriba/modeltest
 
 Run in folder with fasta alignments
 
-If you get an error saying don't have permission, run:
+If you get an error saying don't have permission, run the following to make the file executable:
 
 ```bash
 chmod u+x modeltest-ng
 ```
 
-to make the file executable
+Edit the filepath to where you've stored modeltest-ng and run model_test.sh
 
 ```bash
 #!/bin/bash
@@ -132,15 +147,14 @@ do \
 	~/programs/modeltest-ng -d nt -i $sample -h ugif -s 3 
 done
 ```
-Run the following to find models selected by BIC:
+
+Then run the following to find best models as selected by BIC:
 
 ```bash
 grep -A2 'Best model according to BIC' *.log | grep 'Model' 
 ```
 
-Copy results into excel, add a column with numbers 0-31
-
-Sort by name of selected model
+Copy results into excel, add a column with numbers 0-31 and sort by name of selected model.
 
 
 ## Prepare XML using beauti
