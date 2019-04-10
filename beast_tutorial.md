@@ -2,13 +2,15 @@
 
 ## Data preparation
 
-Start with alignments of 75_75 loci, paralogs removed and filled (5.1-5.3).
+### Alignments
 
-### Build genetrees
+Alignments of 75_75 loci are made as in Hybpiper pipeline but paralogs must removed and missing taxa must be filled (steps 5.1-5.3 https://github.com/ajhelmstetter/afrodyn ).
 
-As in Hybpiper using the genetrees.sh script. Make sure that paralog tree files are also removed.
+### Genetrees
 
-### Calculating root-to-tip variance
+Genetrees are built in Hybpiper pipeline using the genetrees.sh script. Make sure that paralog tree files are removed beforehand.
+
+## Calculating root-to-tip variance
 
 Script for calculating variance is downloadable at:
 
@@ -80,7 +82,7 @@ cp *DN80103_66246_O22988* var32/
 cp *DN79971_143901_Q9LJA3* var32/
 ```
 
-### Remove unwanted samples from alignments
+## Remove unwanted samples from alignments
 
 If you want to remove particular individuals from a fasta alignment, put their name between the "/"
 
@@ -89,7 +91,7 @@ sed -i '/I02_T54/,+1 d' *.FNA
 sed -i '/I02_T55/,+1 d' *.FNA
 ```
 
-### Convert FASTA to nexus
+## Convert FASTA to nexus
 
 Download PGDSpider: http://www.cmpg.unibe.ch/software/PGDSpider/
 
@@ -123,7 +125,7 @@ rm *.nexus
 
 ```
 
-### Model testing
+## Model testing
 
 Download modeltest-ng: https://github.com/ddarriba/modeltest
 
