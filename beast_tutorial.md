@@ -164,22 +164,15 @@ Download BEAST2: http://www.beast2.org/
 
 Open beauti
 
-file > import alignments
+file > import alignments and select your 32 chosen alignments. These should have the same number of individuals.
 
 MAKE SURE ALIGNMENTS ARE IMPORTED IN NUMERICAL ORDER OR SUBSTITUTION MODELS WONT MATCH
 
+Leave substitution and clock model unlinked, link trees so that we can produce a single summary tree as an output.
 
 ### Set substitution model
 
-For strange models e.g. F81 :
-
-https://justinbagley.rbind.io/2016/10/11/setting-dna-substitution-models-beast/
-
-Always use empirical frequencies unless model requires otherwise (e.g. SYM)
-
-Set first model
-
-Ctrl + click to select multiple models and clone from previously set model if the same substitution mode was chosen
+Use the dropdown menu to select model.
 
 If +G set Gamma category count to 4 and make sure shape is estimated
 
@@ -187,11 +180,25 @@ If +I set Proportion invariant to 0.5 and check estimate
 
 (if +I+G do both)
 
+
+For models that aren't in the dropdown e.g. F81 :
+
+https://justinbagley.rbind.io/2016/10/11/setting-dna-substitution-models-beast/
+
+
+Always use empirical frequencies unless model requires otherwise (e.g. SYM)
+
+If multiple partition ahve the same model you set the model once and then copy that model for other partitions.
+
+After defining the model in one partition, Ctrl + click to select multiple models and clone from previously set model.
+
 ### Set clock model
 
 Set first partition to relaxed clock log normal 
 
 Set clock rate to 0.001
+
+Check the box to estimate clock rate
 
 If estimate is unchecked:
 
@@ -201,21 +208,19 @@ Highlight all other loci and clone from first partition
 
 ### Set priors
 
-Tree = Yule model for interspecific analyses
+Tree prior = Yule model for interspecific analyses
 
-Add prior for calibration
+Add prior (at the bottm) for calibration
 
-If prior is secondary calibration on root, select all taxa, name prior root
+If prior is secondary calibration on root, select all taxa then name prior root.
 
-Set mean to node age of divergence time in other tree and change Sigma so 2.5/97.5% covers the 95% HPD node ages 
+For secondary calibrations we might use a normal or uniform prior. For a Normal prior set mean to node age of divergence time in source tree and change Sigma value so that 2.5/97.5% covers the 95% HPD node ages.
 
 ### Set logs
 
 Sample 10,000 trees in total.
 
-If chain length is 10,000,000 store every 1,000
-
-At start run analysis 100,000,000 chain length
+If chain length is 10,000,000 store every 1,000. Do some test runs at this length, if this goes well then start a run  with 100,000,000 chain length sampling every 10,000.
 
 (can find and replace in XML if many partitions)
 
@@ -224,7 +229,7 @@ At start run analysis 100,000,000 chain length
 ```bash
 module load bioinfo/BEAST
 
-beast -beagle -threads 6 patch_reduced.xml
+beast -beagle -threads 4 patch_reduced.xml
 ```
 
 ## STARBEAST (TO BE DONE)
