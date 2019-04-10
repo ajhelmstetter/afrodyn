@@ -127,15 +127,8 @@ rm *.nexus
 
 Download modeltest-ng: https://github.com/ddarriba/modeltest
 
-Run in folder with fasta alignments
-
-If you get an error saying don't have permission, run the following to make the file executable:
-
-```bash
-chmod u+x modeltest-ng
-```
-
-Edit the filepath to where you've stored modeltest-ng and run model_test.sh
+Open model_test.sh and edit the filepath to where you've stored modeltest-ng.
+Run model_test.sh while in folder with fasta alignments
 
 ```bash
 #!/bin/bash
@@ -146,6 +139,12 @@ do \
 	#change filepath
 	~/programs/modeltest-ng -d nt -i $sample -h ugif -s 3 
 done
+```
+
+If you get an error saying don't have permission, run the following to make the file executable:
+
+```bash
+chmod u+x modeltest-ng
 ```
 
 Then run the following to find best models as selected by BIC:
