@@ -56,14 +56,14 @@ Copy the names of the top 32 least variable trees and put in a list:
 DN11767_10499_Q8L7R3
 DN81922_156171_O04648
 
-Put the top 32 files in a folder:
+Put the top 32 alignments in a folder:
 
 ```bash
 cp *DN80103_66246_O22988* var32/
 cp *DN79971_143901_Q9LJA3* var32/
 ```
 
-### Remove unwanted samples
+### Remove unwanted samples from alignments
 
 ```bash
 sed -i '/I02_T54/,+1 d' *.FNA
