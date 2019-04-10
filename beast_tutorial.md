@@ -159,13 +159,9 @@ Copy results into excel, add a column with numbers 0-31 and sort by name of sele
 
 ## Prepare XML using beauti
 
-Download BEAST 2.4.4
-
-https://github.com/CompEvol/beast2/releases?after=v2.4.6
+Download BEAST2: http://www.beast2.org/
 
 Open beauti
-
-
 
 file > import alignments
 
