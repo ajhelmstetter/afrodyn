@@ -1,7 +1,9 @@
 
 ### secapr.sh
 
-THis can produce 50gb of data, so make sure you have enough space
+Run without "-pe ompi X" option or it won't work.
+
+This can produce 50gb of data, so make sure you have enough space
 
 Namelist naming convention is different
 
