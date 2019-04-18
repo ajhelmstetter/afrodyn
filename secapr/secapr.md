@@ -62,5 +62,43 @@ bcftools view -e 'AC==0 || AC==AN || F_MISSING > 0.2' -m2 -M2 -v snps -O z -o an
 vcftools --gzvcf anon_filtered.sub2.vcf --recode --thin 100000 --out anon_filtered_final.vcf
 ```
 
+### DAPC clustering
 
+Read in data with R
+
+```R
+rm(list=ls())
+library(MASS)
+setwd("~/Dropbox/projects/AJH_AFRODYN/annickia/")
+
+#GOAL: create a list where you can convert indexs to names
+id_ind<-read.csv("ID_index.csv")
+id_vou<-read.csv("ID_voucher.csv")
+
+only_seq<-id_vou[id_vou$ID%in%id_ind$ID,]
+sort(id_ind$ID)
+id_ind[order(id_ind$ID),]
+foo<-cbind(only_seq[order(only_seq$ID),],id_ind[order(id_ind$ID),])
+sb<-data.frame(as.character(foo$index),as.character(foo$voucher))
+colnames(sb)<-c('index','voucher')
+sb$index<-as.character(sb$index) 
+sb$voucher<-as.character(sb$voucher)
+sb<-sb[match(sort(sb$index),sb$index),]
+sb<-sb[order(sb$index),]
+
+#Read in VCF
+library(pegas)
+library(vcfR)
+vcf <- read.vcfR("anni_filtered.sub2.vcf",checkFile = T, convertNA = T) #read in all data
+head(vcf) 
+vcf
+
+### convert to genlight
+aa.genlight <- vcfR2genlight(vcf, n.cores=1)
+indNames(aa.genlight) <-sb$voucher
+```
+
+Follow the tutorial:
+
+http://adegenet.r-forge.r-project.org/files/tutorial-dapc.pdf
 
