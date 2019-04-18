@@ -45,8 +45,7 @@ gatk GenotypeGVCFs
 
 this will output a vcf we need to filter
 
-
-
+bcftools version 1.9 produces an error, so use 1.8 or below (1.3 on cluster)
 
 ```bash
 #typical filtering seen in papers
@@ -58,6 +57,7 @@ bcftools view -q 0.01:minor anon_filtered.vcf > anon_filtered_maf.vcf
 #exclude all sites at which no alternative alleles are called for any of the samples ("AC==0"), all sites at which only alternative alleles are called ("AC==AN"), and sites at which the proportion of missing data is greater than 20% ("F_MISSING > 0.2"). 
 bcftools view -e 'AC==0 || AC==AN || F_MISSING > 0.2' -m2 -M2 -v snps -O z -o anon_filtered.sub2.vcf anon_filtered_maf.vcf
 
+#Only run this  step if you want unlinked SNPs
 #ensure that no SNPs are closer to each other than a minimum distance of 100 bp
 vcftools --gzvcf anon_filtered.sub2.vcf --recode --thin 100000 --out anon_filtered_final.vcf
 ```
