@@ -32,8 +32,10 @@
 #### Creation des chemins de repertoires
 # Always use these paths when writing paths to files otherwise it will try to take them from your home directory
 # change depending on who is using the script/what data is being used
+
+#namelist and reference should be here
 path_to_dir_in="/home/helmstetter/data/secapr";
-path_to_scripts="/home/helmstetter/scripts";
+
 path_to_dir_out="/data3/projects/AFRODYN2/secapr_anni_$JOB_ID";
 path_to_tmp="/scratch/helmstetter_$JOB_ID";
 
@@ -44,11 +46,7 @@ echo "copying files";
 #make temporary directory to store files/run analyses in
 mkdir $path_to_tmp
 
-#Files that are in $path_to_dir_in:
-#Annonaceae_nuc_exons_clustered.fa
-#Annonaceae_pep_exons.pep
-#namelist.txt #### namelist contains the sample names that will be analysed
-
+#copy input files to path
 scp nas:/$path_to_dir_in/* $path_to_tmp   ############ Modifier nas/nas2
 
 #These steps copy all files in RUN X that have INDEX X
@@ -58,19 +56,6 @@ scp nas2:/data/projects/afrodyn/RUN60_HISEQ/paired/trimtfiltcutRUN60_HISEQ-INDEX
 scp nas2:/data/projects/afrodyn/RUN60_HISEQ/paired/trimtfiltcutRUN60_HISEQ-INDEX02* $path_to_tmp
 
 echo "done copying fastqs";
-
-#Copy scripts that are used in the pipeline to temporary folder
-echo "copying scripts";
-
-#copy shell scripts
-#need to have:
-#get_seq_lengths.sh
-#hybpiper_stats.sh
-#intronerate.sh
-
-#scp nas:/$path_to_scripts/*.sh $path_to_tmp
-
-echo "done copying scripts";
 
 echo "done copying all files";
 
