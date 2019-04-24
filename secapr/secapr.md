@@ -27,19 +27,22 @@ find joined_fasta_library* files in secapr_output/remapped_reads/reference_seqs
 
 copy all to your reference folder
 
-create files
+Create the following files using the templates provided:
 
 parallel_gvcf.txt
 parallel_index.txt
-
 parallel_readgroups.txt
-RGID=60 should be changed for the number of the MiSeq/HiSeq run for each sample
 
-see templates and replace names of individuals with yours
+Individual names should be replaced with your own
 
-options must be changed for:
-gatk CombineGVCFs 
-gatk GenotypeGVCFs
+In parallel_regroups.txt RGID=60 should be changed for the number of the MiSeq/HiSeq run for each sample e.g. if you have samples from run50 and run51 (R50_T1 & R51_T1) their RGID should be 50 and 51 respectively.
+
+Look into scripts and change options for the following commands:
+
+gatk CombineGVCFs: add the names of all individual XXX.g.vcf files and the name of the combined g.vcf you want to output
+
+gatk GenotypeGVCFs: change input g.vcf name to correspond to what you created in gatk CombineGVCFs and then a name for your final output vcf.
+
 
 ### filter vcf
 
