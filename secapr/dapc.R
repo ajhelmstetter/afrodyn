@@ -50,9 +50,17 @@ grp <- find.clusters(aa.genlight, max.n.clust=20, glPca = pca.1, perc.pca =
                        100, n.iter=1e6, n.start=1000) 
 300
 4
+
+dapc2 <- dapc(aa.genlight, grp$grp,n.da=100, n.pca=300)
+
+#use this to pick the number of PCs to keep in the dapc
+temp <- optim.a.score(dapc2)
+
 dapc1<-dapc(aa.genlight, grp$grp, glPca = pca.1)
-40
+100
 3
+
+#run with 
 ### Calculate Nei's distances between individuals/pops
 #aa.D.ind <- stamppNeisD(aa.genlight, pop = FALSE) # Nei's 1972 distancebetween indivs
 #stamppPhylip(aa.D.ind, file="aa.indiv_Neis_distance.phy.dst") # exportmatrix - for SplitsTree
@@ -79,6 +87,9 @@ table(dapc1$grp)
 ###
 #CROSS VALIDATION
 ###
+#another approach to select number of clusters used
+#long!
+
 #transform vcf to genind
 aa.genind <- vcfR2genind(vcf)
 #set populations based on DAPC results
@@ -202,203 +213,6 @@ anni2$edge.length<-anni2$edge.length*1000
 
 write.csv(lata,"lat2.csv")
 write.csv(longa,"long2.csv")
-#raxml concat tree for all samples (all loci)
-#phy<-read.tree('~/Dropbox/projects/AJH_AFRODYN/annickia/RAxML_bipartitions.annickia')
-
-#Loops through and drops all a1 alleles
-#tips_to_drop<-vector()
-#for (i in 1:length(phy$tip.label)) {
-#  if(grepl("a1", phy$tip.label[i]) == T) {
-#    tips_to_drop[i]<-phy$tip.label[i]
-#  } else {
-#    
-#  }
-#}
-#phy<-drop.tip(phy,na.omit(tips_to_drop))
-
-###
-###read in faststructure results
-###
-library(pophelper)
-setwd("~/programs/fastStructure/anni/")
-par(mfrow=c(1,1))
-#read in data
-dat4<-read.table("anni_filtered_final.4.meanQ")
-colnames(dat4) <- c("Cluster1","Cluster2","Cluster3","Cluster4")
-#form into list and check
-q1 <- list("4"=dat4)
-str(q1)
-is.qlist(q1)
-#rename rows
-rownames(q1[[1]]) <- sb$voucher
-
-#tree is missing  A_mannii_Cristal_8
-#remove from DAPC/fS
-q1$`4`<-q1$`4`[order(match(rownames(q1$`4`),phy$tip.label)),]
-
-plotQ(q1[1],sortind="all",showindlab = T, useindlab = T,dpi = 1080,indlabsize = 0.75)
-
-x<-x[order(match(x$keyName,phy$tip.label)),]
-
-###
-###plot tree with results from DAPC and fastSTRUCTURE
-###
-setwd("~/Dropbox/projects/AJH_AFRODYN/annickia/")
-pdf("phy_dapc.pdf")
-plot(phy,align.tip.label=T,cex=0.25)
-tiplabels(tip=1:length(phy$tip.label),
-          pie=cbind(q1[[1]]$Cluster1,q1[[1]]$Cluster2,q1[[1]]$Cluster3,q1[[1]]$Cluster4),
-          piecol=c("blue","lightblue","red","green"),cex=0.5
-          #,offset=0.0007
-)
-tiplabels(pch=21, cex=0.75, bg=x$value)
-
-dev.off()
-
-###
-###ladderized tree with results from DAPC and fastSTRUCTURE
-###
-phy<-ladderize(phy)
-setwd("~/Dropbox/projects/AJH_AFRODYN/annickia/")
-pdf("phy_dapc_ladd.pdf")
-plot(phy,align.tip.label=T,cex=0.25)
-tiplabels(tip=1:length(phy$tip.label),
-          pie=cbind(q1[[1]]$Cluster1,q1[[1]]$Cluster2,q1[[1]]$Cluster3,q1[[1]]$Cluster4),
-          piecol=c("blue","lightblue","red","green"),cex=0.5
-          #,offset=0.0007
-)
-tiplabels(pch=21, cex=0.8, bg=x$value)
-x$col<-factor(x$value, levels = c(1:length(unique(x$value))), 
-              labels = hue_pal()(length(unique(x$value))))
-tiplabels(pch=21, cex=0.75, bg=as.character(x$col))
-dev.off()
-
-
-###
-###ggtree with results from DAPC and fastSTRUCTURE
-###
-library(scales)
-
-#source("https://bioconductor.org/biocLite.R")
-#biocLite("ggtree")
-
-x <- data.frame(keyName=names(grp$grp), value=grp$grp, row.names=NULL) #
-x<-x[order(match(x$keyName,phy$tip.label)),]
-x<-cbind(x,((colnames(q1$`4`)[apply(q1$`4`,1,which.max)])))
-colnames(x)<-c("name","dapc","fastStructure")
-x$fastStructure<-gsub("Cluster","",x$fastStructure)
-x$fastStructure<-as.factor(x$fastStructure)
-x2<-data.frame(x$dapc,x$fastStructure)
-row.names(x2)<-x$name
-colnames(x2)<-c("DAPC","fastSTRUCTURE")
-
-library(ggtree)
-library(ggstance)
-phy$tip.label<-gsub("A_affinis_","",phy$tip.label)
-phy$tip.label<-gsub("A_pilosa_","",phy$tip.label)
-
-row.names(x2)<-gsub("A_affinis_","",row.names(x2))
-row.names(x2)<-gsub("A_pilosa_","",row.names(x2))
-
-p <- ggtree(phy) + geom_tiplab(size=2, align=TRUE, linesize=.5,offset=0.001) + theme_tree2() +xlab("Substitutions per site")
-pp <- (p + scale_y_continuous(expand=c(0, 0.3))) %>% gheatmap(x2, offset=0.005, width=0.5, colnames=F) %>% scale_x_ggtree()
-pp + theme(legend.position="none")
-
-admix<-q1$`4`
-#format fastSTRUCTURE dataframe for panel
-c1<-data.frame(rownames(admix),admix$Cluster1,rep("Cluster1",length(admix$Cluster1)))
-colnames(c1)<-c("id","value","category")
-c2<-data.frame(rownames(admix),admix$Cluster2,rep("Cluster2",length(admix$Cluster1)))
-colnames(c2)<-c("id","value","category")
-c3<-data.frame(rownames(admix),admix$Cluster3,rep("Cluster3",length(admix$Cluster1)))
-colnames(c3)<-c("id","value","category")
-c4<-data.frame(rownames(admix),admix$Cluster4,rep("Cluster4",length(admix$Cluster1)))
-colnames(c4)<-c("id","value","category")
-
-clust<-rbind(c1,c2,c3,c4)
-
-clust$id<-gsub("A_affinis_","",clust$id)
-clust$id<-gsub("A_pilosa_","",clust$id)
-
-
-xdapc<-data.frame(rownames(x2))
-xdapc$category<-x2$DAPC
-xdapc$value<-rep(1, length(xdapc$rownames.x2.))
-
-colnames(xdapc)<-c("id","category","value")
-
-xdapc$category<-as.character(xdapc$category)
-
-foo<-xdapc
-
-for (i in 1:length(unique(xdapc$category))){ 
-a1<-xdapc[xdapc$category!=i,]
-a1$value<-rep(0,length(a1$id))
-a1$category<-rep(i,length(a1$id))
-foo<-rbind(foo,a1)
-}
-
-library(ggstance)
-##Maybe used for structure plot?
-p <- ggtree(phy) + geom_tiplab(size=2, align=TRUE, linesize=.5,offset=0.001)
-p2 <- facet_plot(p + xlim_tree(0.045), panel = 'DAPC', data = foo, 
-                 geom = geom_barh, 
-                 mapping = aes(x = value, fill = as.factor(category)), 
-                 stat='identity')
-p3 <- facet_plot(p2, panel = 'fastSTRUCTURE', data = clust, 
-                 geom = geom_barh, 
-                 mapping = aes(x = value, fill = as.factor(category)), 
-                 stat='identity')
-p3
-
-
-
-###
-###Faststructure individual map
-###
-
-coords<-only_seq[only_seq$voucher%in%row.names(q1$`4`),]
-coords<-coords[match(row.names(q1$`4`),as.character(coords$voucher)),]
-
-library(maps)
-library(plotrix)
-#plot map of world in relevant region
-
-###
-###Faststructure map with populations
-###
-map('world', xlim=c(5,16), ylim=c(-5,6), col='gray90', fill=TRUE)
-map('world', xlim=c(5,16), ylim=c(-5,6), col='gray90', fill=TRUE)
-map.axes() #Add axes
-only_seq<-id_vou[id_vou$ID%in%id_ind$ID,]
-sort(id_ind$ID)
-id_ind[order(id_ind$ID),]
-foo<-cbind(only_seq[order(only_seq$ID),],id_ind[order(id_ind$ID),])
-sb<-data.frame(as.character(foo$index),as.character(foo$voucher),as.character(foo$pop))
-colnames(sb)<-c('index','voucher','pop')
-sb$index<-as.character(sb$index)
-sb$voucher<-as.character(sb$voucher)
-sb$pop<-as.character(sb$pop)
-
-coords<-coords[order(match(coords$voucher,rownames(admix))),]
-sb<-sb[order(match(sb$voucher,rownames(admix))),]
-
-#make data frame with all info
-allDat<-cbind(coords,admix,sb)
-
-#aggregate data frame, calculate average coord/cluster membership
-aggPop<-aggregate(allDat,by=list(allDat$pop),FUN = 'mean')
-#calculate number of individuals per site and add to data frame
-aPN <-cbind(aggPop,table(allDat$pop))
-
-g_color_hue <- function(n) {
-  hues = seq(15, 375, length = n + 1)
-  hcl(h = hues, l = 65, c = 100)[1:n]
-}
-
-#plot pie charts showing sampling locations scaled by number of individuals per location
-for (i in 1:nrow(aPN)){floating.pie(aPN$ddlong[i],aPN$ddlat[i],c(aPN$Cluster1[i],aPN$Cluster2[i],aPN$Cluster3[i],aPN$Cluster4[i]),radius=0.5/aPN$Freq[i],col=hue_pal()(8)[5:8]) }
-
 
 ###
 # DESCRIPTIVE STATISTICS
