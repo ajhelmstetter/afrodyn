@@ -46,9 +46,11 @@ gatk GenotypeGVCFs: change input g.vcf name to correspond to what you created in
 
 ### filter vcf
 
-this will output a vcf we need to filter
+This will output a vcf we need to filter
 
-bcftools version 1.9 produces an error, so use 1.8 or below (1.3 on cluster)
+bcftools version 1.9 produces an error for the first filtering step, so use 1.8 or below (1.3 on cluster)
+
+Then reload version 1.9 for the next steps.
 
 ```bash
 #typical filtering seen in papers
