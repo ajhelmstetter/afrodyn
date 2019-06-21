@@ -232,6 +232,105 @@ module load bioinfo/BEAST
 beast -beagle -threads 4 patch_reduced.xml
 ```
 
-## STARBEAST (TO BE DONE)
+## STARBEAST
 
-file > template > starbeast
+### Prerequisites
+
+DAPC analysis clusters are known for each individual
+
+* Randomly select 5 individuals per cluster using this part of the DAPC script
+
+```R
+rand5<-do.call( rbind, lapply( split(dapc_grps, dapc_grps$bar.value) ,
+                               function(df) df[sample(nrow(df), min(5, nrow(df))) , ] )
+)
+
+write.csv(rand5,"dapc_grps_rand5.csv")
+```
+
+* Identify all var32 alignments and copy into a directory
+
+* Remove individuals not part of the subset (not in the dapc_grps_rand5.csv table)
+
+This script can be used to delete individuals from alignments:
+
+```bash
+sed -i '/I08_T55/,+1 d' *.FNA
+sed -i '/I01_T10/,+1 d' *.FNA
+sed -i '/I01_T12/,+1 d' *.FNA
+sed -i '/I01_T13/,+1 d' *.FNA
+```
+Create sed commands all extra individuals and put them in a file "sed.txt
+
+```bash
+#run in directory with .FNA alignments
+
+bash sed.txt
+```
+
+You should end up with all alignments containing (N\*5 + outgroups)\*2 number of lines.
+
+e.g. if I have 3 clusters with 2 outgroup taxa each .FNA file should have (3\*5+2)\*2 = 34 lines
+
+this can be checked by running 
+
+```bash
+#run in directory with .FNA alignments
+
+wc -l *
+```
+
+
+* Run fasta_to_nexus.sh and model_test.sh
+
+### load template
+
+Open beauti and set the template to:
+
+file > template > STARBEAST_WITH_STACEY_OPs
+
+This improves mixing. (may need to install packages STARBEAST2)
+
+### Import alignments
+
+As in previous BEAST runs
+
+###  Taxon sets
+
+Here you assign individuals to their population genetic clusters, as inferred using DAPC,
+
+In the species/population column enter a,b,c for clusters 1,2,3 etc.
+
+Be sure to assign your outgroups to a different cluster "o"
+
+### Site models 
+
+Site models can be selected and set as in the previous BEAST tutorial
+
+### Clock models
+
+Clock models should be set to Strict clock for all partitions
+
+make sure the estimate box is checked and set starting value to 0.001
+
+### Do not touch settings in the multispecies coalesent tab
+
+### Priors
+
+Change the tree prior to coalescent exponential population
+
+add a uniform prior to the root (include all taxa).
+
+Examine your backbone tree and fine the node that represents your focal species and its sister species.
+
+Use the 95% HPD node heights as the minimum and maximum values in the uniform prior.
+
+### MCMC
+
+run the chain for 300,000,000 generations, sampling tracelog, speciesTreeLogger, screenlog every 30,000 generations.
+
+treelogs can also be sampled every 30,000 generations though it may be easier to save the xml open in sublime and find/replace "5000" with "30000"
+
+### Launch script
+
+You may need to install packages on your version of BEAST on the cluster for this to run. Come see me if you get errors saying "package not found" or similar.
