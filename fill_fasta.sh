@@ -32,7 +32,7 @@ for f in $FILES
 do
     while read line
     do
-        if grep -q $line $f; then
+        if grep -q "${line}$" $f; then
             :
         else
             #if the name is not there, write a header
