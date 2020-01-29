@@ -20,13 +20,7 @@ Nom du job **-N** and **path_to_dir_out** should be changed for each run of the 
 ```bash
 path_to_dir_out="/home/helmstetter/output/annonaceae_$JOB_ID/";
 ```
-This must be done for:
-
-hybpiper.sh
-paralogs.sh
-align.sh
-genetrees.sh
-concat.sh
+This must be done for all of the scripts run via qsub
 
 ### 0.3 Load modules and install prerequisites
 
@@ -498,7 +492,7 @@ Change your input folder to wherever your alignment and partitions files are
 Names of analysis, fasta and paritions file ( -q -s and -n options) must be changed in the script, here:
 
 ```bash
-raxmlHPC-PTHREADS -f a -x 12345 -p 12345 -T 2 -# 100 -m GTRGAMMA -O -q ./fam_1493865.partitions -s ./fam_1493865.fa -n fam_1493865
+raxmlHPC-PTHREADS -f a -x 12345 -p 12345 -T 2 -# 100 -m GTRGAMMA -o I06_T55,I06_T54 -O -q ./annickia.partitions -s ./annickia.fa -n annickia
 ```
 Run *raxml.sh*
 
