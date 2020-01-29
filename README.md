@@ -28,10 +28,12 @@ align.sh
 genetrees.sh
 concat.sh
 
-### 0.3 Install prerequisites
+### 0.3 Load modules and install prerequisites
 
 nw_ed:
-
+```bash
+module load bioinfo/newick-utils/1.6 
+```
 http://cegg.unige.ch/newick_utils
 
 ASTRAL:
@@ -39,7 +41,9 @@ ASTRAL:
 https://github.com/smirarab/ASTRAL
 
 phyx:
-
+```bash
+module load bioinfo/phyx/0.999 
+```
 https://github.com/FePhyFoFum/phyx
 
 ## 1 RUN HYBPIPER
@@ -265,11 +269,11 @@ Take the filepath of your modified *retrieved_supercontigs* folder (path should 
 ```bash
 path_to_dir_in="/home/helmstetter/hybpiper_fam_1493584/retrieved_supercontigs/oneline/header";
 ```
-Run align.sh
+Run *align.sh*
 
 ### 3.2 Run post_align.sh
 
-Go into the ouput directory from align.sh and run post_align.sh
+Go into the ouput directory from *align.sh* and run *post_align.sh*
 
 This will grab the relevant output files and put them into a new folder *gblocks*
 
@@ -313,27 +317,25 @@ We make a 75_75 folder to prepare for the next steps
 
 Your previously identified 75_75 loci (1.7)
 
-We should now make a file, 75_75_list.txt, that allows us to select only 75_75 trees for downstream inference
+We should now make a file, 75_75.txt, that allows us to select only 75_75 trees for downstream inference
 
-Add "RAxML_bipartitions.aligned.header." before the exon name and "\_supercontig.FNA" after so each line matches a tree filename
-
-Your 75_75_list.txt should look like this for genetrees and be placed in your home directory:
+First, make a directory for these files
 
 ```bash
-RAxML_bipartitions.aligned.header.DN80049_144250_Q8GX43_supercontig.FNA
-RAxML_bipartitions.aligned.header.DN79500_139662_Q94AG3_supercontig.FNA
-RAxML_bipartitions.aligned.header.DN32551_23546_O80541_supercontig.FNA
-RAxML_bipartitions.aligned.header.DN19702_40117_Q9LN60_supercontig.FNA
-RAxML_bipartitions.aligned.header.DN78604_58111_O65525_supercontig.FNA
-RAxML_bipartitions.aligned.header.DN74895_124004_Q8S8M1_supercontig.FNA
+mkdir 75_75
 ```
-Run this line while in your 75_75 folder 
+Your 75_75.txt should look like this for genetrees:
 
 ```bash
-while read file; do cp "$file" 75_75/; done < ~/75_75_list.txt 
-
-cd 75_75
+cp *DN60091_54632_Q94C90_supercontig.FNA* 75_75
+cp *DN34701_36663_Q84JA6_supercontig.FNA* 75_75
+cp *DN31863_20639_P17745_supercontig.FNA* 75_75
+cp *DN53845_77411_Q9ZS97_supercontig.FNA* 75_75
+cp *DN68704_26115_O81153_supercontig.FNA* 75_75
+cp *DN38045_76398_Q9SYK9_supercontig.FNA* 75_75
+cp *DN11560_9935_Q94B42_supercontig.FNA* 75_75
 ```
+Run this file with bash or copy and paste (not if there are many lines as it can skip) while in your 75_75 folder 
 
 ### 4.4 Remove paralogous loci
 
@@ -366,6 +368,8 @@ Collapsing very low support branches is thought to improve accuracy of support v
 Move into the directory with your ASTRAL input file and run
 
 ```bash
+module load bioinfo/newick-utils/1.6
+
 nw_ed all.trees 'i & b<=10' o > all_bs10.trees 
 ```
 
@@ -376,12 +380,12 @@ An ASTRAL run with no option -t will annotate branches with local posterior prob
 Make sure you run ASTRAL on your collapsed trees file
 
 ```bash
-java -jar astral.5.5.11.jar -t 1 -i all_bs10.trees -o astral_all_bs10_QS.tre 2> astral_all_bs10_QS.log
+java -jar PATH_TO_ASTRAL/astral.5.5.11.jar -t 1 -i all_bs10.trees -o astral_all_bs10_QS.tre 2> astral_all_bs10_QS.log
 ```
 
 You can look at the log file to find numbers related to quartet support etc
 
-Have a look at your output ASTRAL tree using figtree
+Download and have a look at your output ASTRAL tree using figtree
 
 ### 4.8 Annotate tree
 
@@ -401,6 +405,8 @@ I10_T58	Neouvaria_acuminatissima
 
 Once you have made this file run this command to add new names to tree tip labels. Python version 2.7 is needed to run this.
 
+The tree can also be annontated in a similar way in R using the function *sub.taxa.label* from the package *phytools*.
+
 ```bash
 python2.7 taxon_name_subst.py sub_table.txt astral_fam_1493813_bs10_LR.tre 
 ```
@@ -416,16 +422,16 @@ We're now going back to the post-alignment stage:
 ```bash
 /home/helmstetter/align_fam_1493810/helmstetter_1493810/gblocks
 ```
-Modify your "75_75_list.txt" to make a new file "75_75_concat_list.txt" with the appropriate loci in the following format:
+You can use the same 75_75 commands as for the genetrees to copy the alignments to a new folder
 
 ```bash
-aligned.header.DN60091_54632_Q94C90_supercontig.FNA
-aligned.header.DN34701_36663_Q84JA6_supercontig.FNA
-aligned.header.DN31863_20639_P17745_supercontig.FNA
-aligned.header.DN53845_77411_Q9ZS97_supercontig.FNA
-aligned.header.DN68704_26115_O81153_supercontig.FNA
-aligned.header.DN38045_76398_Q9SYK9_supercontig.FNA
-aligned.header.DN11560_9935_Q94B42_supercontig.FNA
+cp *DN60091_54632_Q94C90_supercontig.FNA* 75_75
+cp *DN34701_36663_Q84JA6_supercontig.FNA* 75_75
+cp *DN31863_20639_P17745_supercontig.FNA* 75_75
+cp *DN53845_77411_Q9ZS97_supercontig.FNA* 75_75
+cp *DN68704_26115_O81153_supercontig.FNA* 75_75
+cp *DN38045_76398_Q9SYK9_supercontig.FNA* 75_75
+cp *DN11560_9935_Q94B42_supercontig.FNA* 75_75
 ```
 
 Once you've made this run to following to select 75_75 loci
@@ -457,33 +463,47 @@ mv *DN46758_53315_Q8GYI7* paralogs
 
 *fill_fasta.sh* script will insert gap sequences where individuals are missing in each alignment to ensure that after concatenation all sequences are the same length.
 
-It requires your namelist as an argument as follows:
+Ensure that your namelist has a line return on the last line and does not have an empty last line
+
+```bash
+cat ~/data/hybpiper/namelist_fam.txt
+```
+
+The script requires your namelist as an argument as follows:
 
 ```bash
 bash ~/scripts/fill_fasta.sh ~/data/hybpiper/namelist_fam.txt
 ```
+
+
 ### 5.4 Concatenate alignments
 
-Download the 75_75 folder containing **filled** fasta alignments onto your computer. Enter the folder and run:
+For maximum liklihood approaches we need to concatenate our alignments. Run the following in the folder with your filled alignments.
 
 ```bash
+module load bioinfo/phyx/0.999 
+
 pxcat -s *.FNA -o fam_1493865.fa -p fam_1493865.partitions
 ```
-This will produce two output files, the fasta file and the partitions file, which you need to upload back to the cluster.
+This will produce two output files, the fasta file and the partitions file, which are used as input.
+
+Make a new folder in the *data* folder called *raxml* and *cp* these files into it
 
 ### 5.5 Infer concatenated RAxML tree
 
-Change your input folder to wherever your uploaded your alignment and partitions file
+Open and examine the *raxml.sh* script
 
-Names of analysis, fasta and paritions file ( -q -s and -n options) must be changed in the raxml_concat.sh script, here:
+Change your input folder to wherever your alignment and partitions files are
+
+Names of analysis, fasta and paritions file ( -q -s and -n options) must be changed in the script, here:
 
 ```bash
-raxmlHPC-PTHREADS -f a -x 12345 -p 12345 -T 8 -# 100 -m GTRGAMMA -O -q ./fam_1493865.partitions -s ./fam_1493865.fa -n fam_1493865
+raxmlHPC-PTHREADS -f a -x 12345 -p 12345 -T 2 -# 100 -m GTRGAMMA -O -q ./fam_1493865.partitions -s ./fam_1493865.fa -n fam_1493865
 ```
-Run *raxml_concat.sh*
+Run *raxml.sh*
 
 Once run, the 'bipartitions' file is the one you are looking for in the output.
 
-Run the taxon_name_subst.py script on the tree as before (4.8) to add names to tips
+Download and open in figtree
 
 Now, marvel at the false confidence of concatenation approaches
