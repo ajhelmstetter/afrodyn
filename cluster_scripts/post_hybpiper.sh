@@ -25,7 +25,7 @@ rename -v '.oneline' '' *
 rename -v '.fasta' '.FNA' *
 
 for filename in *.FNA; do
-	sed '/^>/s/-.*//' > header.${filename}
+	sed '/^>/s/-.*//' $filename > header.${filename}
 done
 
 mkdir header
