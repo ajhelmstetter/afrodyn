@@ -45,5 +45,8 @@ rug(as.numeric(length7575[1,]), ticksize = 0.03, side = 1, lwd = 0.5, col = par(
 fam<-names(length7575[1,])
 fam
 
-#Copy list of names into a file, and modify to the format shown in README
+#Copy list of names into a file, and modify to the format shown in README (see step 4.3)
 data.frame(fam)
+
+# or run this:
+cat(x = paste0("cp *", fam, "_supercontig.FNA* 75_75"), file = "75_75.txt", sep = "\n")
