@@ -64,7 +64,7 @@ if __name__ == "__main__":
 					i.label += "_"+DICT[i.label]
 					#i.label = DICT[i.label]
 				except:
-					print i.lable,"not in the taxon table provided"
+					print i.label,"not in the taxon table provided"
 
 	with open(treefile+".name","w") as outfile:
 		outfile.write(newick3.tostring(intree)+";\n")
