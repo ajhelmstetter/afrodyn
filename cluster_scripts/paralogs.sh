@@ -1,28 +1,26 @@
 #!/bin/bash
 
-############      SGE CONFIGURATION      ###################
-# Ecrit les erreur dans le fichier de sortie standard 
-#$ -j y 
+############      SLURM CONFIGURATION      ###################
 
-# Shell que l'on veut utiliser 
-#$ -S /bin/bash 
+#SBATCH --job-name=paralogs_TEST
+#SBATCH --partition=highmem
+#SBATCH --nodelist=node4
+# --account=project_group
+#SBATCH --cpus-per-task=2 
+#SBATCH --ntasks-per-node=4
+#SBATCH --mail-user=leo-paul.dagallier@ird.fr
+#SBATCH --mail-type=ALL
 
-# Email pour suivre l'execution 
-#$ -M andrew.helmstetter@ird.fr
-
-# Type de massage que l'on recoit par mail
-#    -  (b) un message au demarrage
-#    -  (e) a la fin
-#    -  (a)  en cas d'abandon
-#$ -m e 
-#$ -V
-
-# Queue que l'on veut utiliser
-#$ -q bioinfo.q
-
-# Nom du job
-#$ -N paralog_back
 ############################################################
+
+# Return the JOB infos in the log file:
+echo "JOB CONFIGURATION"
+echo "Job ID: " $SLURM_JOB_ID
+echo "Name of the job: " $SLURM_JOB_NAME		
+echo "List of nodes allocated to the job: " $SLURM_JOB_NODELIST
+echo "Number of nodes allocated to the job: " $SLURM_JOB_NUM_NODES
+echo "Number of CPU tasks in this job: " $SLURM_NTASKS
+echo "Directory from which sbatch was invoked: " $SLURM_SUBMIT_DIR
 
 # phylogeny with RAxML
 
@@ -74,10 +72,13 @@ echo -e "\n" >> para_table.txt
 done < par_list.txt
 
 sed -i 's/[.].*//' para_table.txt # removes all the characters situated after any "." character 
+
 sed -i '/^$/d' para_table.txt # removes empty lines
 
 cat para_table.txt | sort -f | uniq > loci_list.txt
 
+# Combine fasta for each loci
+echo "combine fasta for each loci";
 while read i
 do
 	echo $i
@@ -95,30 +96,46 @@ do
 	done < ${i}_paralog_fasta_list.txt
 
 	cat ${i}_fastas/* >> ${i}_fastas/combined_${i}.fasta
+done < loci_list.txt
+echo "done combining fasta for each loci";
 
-	echo "starting alignment";
+# Gather the combined fastas into a single directory and run alignments
+echo "gather combined fasta";
+	mkdir combined_fastas
+	find . -name 'combined_*.fasta' -exec cp -t combined_fastas {} +
+echo "done gathering combined fasta";
 
-	cd ${i}_fastas
-	
+echo "starting alignment";
+	cd combined_fastas
 	#makes commands for all of the files in the folder and runs them in batches of jobs
 	ls -1 ./ | \
 		while read sample; do
 		  	echo "mafft --auto ${sample} > aligned.${sample}"
-		done | parallel -j8 #change depending on dataset size
-	
-	echo "done alignment";
+		done | parallel -j4 #change depending on dataset size: has to be the same as --ntasks-per-node (parameter in SLURM configuration)
+echo "done alignment";
 
-	echo "starting raxml";
-	
-	#change -T depending on tree size
-	#total cores = -j8 x -T 1 = 8 cores
-	raxmlHPC-PTHREADS -f a -x 12345 -p 12345 -T 1 -# 100 -m GTRGAMMA -O -s ./aligned.combined_${i}.fasta -n ${i}
-	
-	echo "done raxml";
+# Gather the aligned combined fastas into a single directory and run RAxML
+echo "gather aligned combined fasta";
+mkdir aligned_combined_fastas
+find . -name 'aligned.combined_*' -exec cp -t aligned_combined_fastas {} +
+echo "done gathering aligned combined fasta";
 
-	cd $path_to_tmp
+echo "starting raxml";
+cd aligned_combined_fastas
+	#makes commands for all of the files in the folder and runs them in batches of jobs
+	ls -1 ./ | \
+		while read sample; do
+		  	echo "raxmlHPC-PTHREADS -f a -x 12345 -p 12345 -T 2 -# 100 -m GTRGAMMA -O -s ${sample} -n ${sample}" #change -T depending on dataset size: has to be the same as the --cpus-per-task parameter (in SLURM configuration)
+		done | parallel -j4 #change depending on dataset size: has to be the same as the --ntasks-per-node parameter (in SLURM configuration)
+echo "done raxml";
 
-done < loci_list.txt
+# Gather the RAxML trees into a single directory (to be transfered locally for plot_paralogs.R)
+echo "gather the trees"; 
+cd $path_to_tmp
+mkdir trees
+find . -name '*bipartitions.*' -exec cp -t trees {} +
+echo "trees gathered";
+
 
 #Transfer output data
 
