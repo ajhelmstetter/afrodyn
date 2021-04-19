@@ -73,7 +73,8 @@ echo $i >> para_table.txt
 echo -e "\n" >> para_table.txt
 done < par_list.txt
 
-sed -i '/^$/d' para_table.txt
+sed -i 's/[.].*//' para_table.txt # removes all the characters situated after any "." character 
+sed -i '/^$/d' para_table.txt # removes empty lines
 
 cat para_table.txt | sort -f | uniq > loci_list.txt
 
