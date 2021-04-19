@@ -90,7 +90,7 @@ do
 	
 	while read j
 	do
-		nom=$(echo $j | cut -c3-9)
+		nom=$(echo $j | sed -e 's/^.\///' | sed -e 's/\/[[:graph:]]*//')
 		cp $j ${i}_fastas/${nom}.fasta
 	done < ${i}_paralog_fasta_list.txt
 
