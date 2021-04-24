@@ -132,6 +132,7 @@ do
 	echo "python $path_to_tmp/reads_first.py -b $path_to_tmp/Angiosperms353_targetSequences.fasta -r $path_to_tmp/${name}_R1.fastq $path_to_tmp/${name}_R2.fastq --prefix $path_to_tmp/$name --cpu 1 --bwa" >> hybpiper_parallel.txt
 done < namelist.txt
 
+# /!\ Care must be taken to not overparallelise python because too many instances of python running at the same time on the same machine causes threading issues /!\
 #run jobs in lots of 8
 parallel -j 8 < hybpiper_parallel.txt
 
