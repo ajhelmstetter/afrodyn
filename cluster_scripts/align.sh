@@ -1,28 +1,25 @@
 #!/bin/bash
 
-############      SGE CONFIGURATION      ###################
-# Ecrit les erreur dans le fichier de sortie standard 
-#$ -j y 
+############      SLURM CONFIGURATION      ###################
 
-# Shell que l'on veut utiliser 
-#$ -S /bin/bash 
-
-# Email pour suivre l'execution 
-#$ -M andrew.helmstetter@ird.fr
-
-# Type de massage que l'on recoit par mail
-#    -  (b) un message au demarrage
-#    -  (e) a la fin
-#    -  (a)  en cas d'abandon
-#$ -m e 
-#$ -V
-
-# Queue que l'on veut utiliser
-#$ -q bioinfo.q
-
-# Nom du job
-#$ -N align_fam
+#SBATCH --job-name=align_magnoliids_reduced
+#SBATCH --partition=global
+#SBATCH --account=global
+#SBATCH --cpus-per-task=1
+#SBATCH --ntasks-per-node=20
+#SBATCH --mail-user=andrew.j.helmstetter@gmail.com
+#SBATCH --mail-type=ALL
 ############################################################
+
+
+echo "JOB CONFIGURATION"
+echo "Job ID: " $SLURM_JOB_ID
+echo "Name of the job: " $SLURM_JOB_NAME		
+echo "List of nodes allocated to the job: " $SLURM_JOB_NODELIST
+echo "Number of nodes allocated to the job: " $SLURM_JOB_NUM_NODES
+echo "Number of CPU tasks in this job: " $SLURM_NTASKS
+echo "Directory from which sbatch was invoked: " $SLURM_SUBMIT_DIR
+
 
 ###################################################
 #### 0 preparation of files and transfer to cluster
@@ -35,12 +32,12 @@
 # path should be "/home/ACCOUNT/HYBPIPER_OUT_FOLDER/retrieved_supercontigs/oneline/header"
 # past in to path_to_dir_in
 # Ensure formatted is correct (supercontigs introduce exon names into headers which can cause problems downstream)
-path_to_dir_in="/home/helmstetter/hybpiper_fam_1493584/retrieved_supercontigs/oneline/header";
+path_to_dir_in="/data3/projects/AFRODYN2/magnoliids/hybpiper_magnoliids/retrieved_supercontigs/oneline/header_remove10";
 
 # change output folder name
-path_to_dir_out="/home/helmstetter/align_fam_$JOB_ID/";
+path_to_dir_out="/data3/projects/AFRODYN2/magnoliids/align_magnoliids_reduced_$SLURM_JOB_ID/";
 
-path_to_tmp="/scratch/helmstetter_$JOB_ID/";
+path_to_tmp="/scratch/helmstetter_$SLURM_JOB_ID/";
 	
 #### Create folders on node 
 echo "Transfering files to node";
@@ -67,7 +64,7 @@ cd $path_to_tmp
 ls -1 ./ | \
 while read sample; do
   	echo "mafft --auto ${sample} > aligned.${sample}"
-done | parallel -j12
+done | parallel -j20
 
 echo "done alignment";
 
@@ -82,7 +79,7 @@ ls -1 ./ | \
 while read sample; do
 	#the -b2 parameter can be removed (default) or set to 0 depending on severity of cleaning desired
   	echo "Gblocks aligned.${sample} -t=d -b5=a"
-done | parallel -j12
+done | parallel -j20
 
 #move to home directory
 cd ~
@@ -95,7 +92,7 @@ echo "Transfering data from node to master";
 
 mkdir $path_to_dir_out
 
-scp -rp $path_to_tmp/ nas:/$path_to_dir_out/
+scp -rp $path_to_tmp/ nas3:/$path_to_dir_out/
 
 echo "done transfer";
 

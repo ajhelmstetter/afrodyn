@@ -2,8 +2,8 @@
 
 ############      SLURM CONFIGURATION      ###################
 #SBATCH --job-name=hybiper_magnoliids
-#SBATCH --cpus-per-task=1 
-#SBATCH --ntasks-per-node=8
+#SBATCH --cpus-per-task=1
+#SBATCH --ntasks-per-node=12
 #SBATCH --mail-user=andrew.j.helmstetter@gmail.com
 #SBATCH --mail-type=ALL
 ############################################################
@@ -42,7 +42,7 @@ path_to_hybpiper="/data3/projects/home/helmstetter/hybpiper/program";
 path_to_scripts="/data3/projects/home/helmstetter/hybpiper/scripts";
 
 #output folder
-path_to_dir_out="/data3/projects/home/helmstetter/hybpiper_magnoliids_$SLURM_JOB_ID/";
+path_to_dir_out="/data3/projects/AFRODYN2/magnoliids/hybpiper_magnoliids_$SLURM_JOB_ID/";
 
 #temporary folder (intermediate files)
 path_to_tmp="/scratch/helmstetter_$SLURM_JOB_ID";
@@ -74,10 +74,13 @@ echo "copying fastqs";
 # INSERT PATHS TO RAW FASTQs #
 ##############################
 
+#load parallel
+module load bioinfo/parallel
+
 #copy all
 #scp nas3:/data3/projects/AFRODYN2/magnoliids/*fastq.gz $path_to_tmp
 
-mv $path_to_tmp/namelist_magnoliids.txt $path_to_tmp/namelist.txt
+mv $path_to_tmp/namelist_magnoliids_full.txt $path_to_tmp/namelist.txt
 
 #move to scratch directory
 cd $path_to_tmp
@@ -87,7 +90,7 @@ touch copy_parallel.txt
 
 while read name;
 do
-	echo "scp nas3:/data3/projects/AFRODYN2/magnoliids/${name}*.gz $path_to_tmp" >> copy_parallel.txt
+	echo "scp nas3:/data3/projects/AFRODYN2/magnoliids/raw_data/${name}*.gz $path_to_tmp" >> copy_parallel.txt
 done < namelist.txt
 
 #run jobs in lots of4
@@ -100,7 +103,7 @@ echo "done copying all files";
 # gunzip and rename fastqs
 
 echo "gunzipping files"
-ls *.gz | parallel -j 8 gunzip 
+ls *.gz | parallel -j 12 gunzip 
 echo "done gunzipping files"
 
 #Renames to the format e.g.I04_T44_R1
@@ -133,7 +136,7 @@ do
 done < namelist.txt
 
 #run jobs in lots of 8
-parallel -j 8 < hybpiper_parallel.txt
+parallel -j 12 < hybpiper_parallel.txt
 
 echo "done reads_first";
 
@@ -194,10 +197,17 @@ mv *.fasta retrieved_supercontigs/
 find . -name '*para*' >> para.txt
 
 mkdir retrieved_par
-while read i
+
+rm para_parallel.txt
+touch para_parallel.txt
+
+while read i;
 do
-mkdir -p retrieved_par/$i && cp $i retrieved_par/$i
+	echo "mkdir -p retrieved_par/$i && cp $i retrieved_par/$i" >> para_parallel.txt
 done < para.txt
+
+#run jobs in lots of 8
+parallel -j 12 < para_parallel.txt
 
 # returns weird warnings like "cp: ommission du répertoire" for every directory, but the copy did work for the files
 
@@ -218,13 +228,13 @@ rm $path_to_tmp/*.fastq
 
 #Copies statistics and retrieved sequences to output folder in home directory
 scp -p $path_to_tmp/*.txt nas3:/$path_to_dir_out/
-scp -rp $path_to_tmp/retrieved_exons/ nas3:/$path_to_dir_out/
-scp -rp $path_to_tmp/retrieved_introns/ nas3:/$path_to_dir_out/
-scp -rp $path_to_tmp/retrieved_supercontigs/ nas3:/$path_to_dir_out/
-scp -rp $path_to_tmp/retrieved_par/ nas3:/$path_to_dir_out/
+#scp -rp $path_to_tmp/retrieved_exons/ nas3:/$path_to_dir_out/
+#scp -rp $path_to_tmp/retrieved_introns/ nas3:/$path_to_dir_out/
+#scp -rp $path_to_tmp/retrieved_supercontigs/ nas3:/$path_to_dir_out/
+#scp -rp $path_to_tmp/retrieved_par/ nas3:/$path_to_dir_out/
 
 #copy everything, for testing
-#scp -rp $path_to_tmp/* nas:/$path_to_dir_out/
+scp -rp $path_to_tmp/* nas:/$path_to_dir_out/
 
 echo "done moving";
 
@@ -236,4 +246,5 @@ echo "done moving";
 
 echo "Data NOT deleted on node, FINISHED"
 echo "Must delete the folder $path_to_tmp on $SLURM_JOB_NODELIST"
+
 

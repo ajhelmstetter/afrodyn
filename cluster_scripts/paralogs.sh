@@ -2,13 +2,10 @@
 
 ############      SLURM CONFIGURATION      ###################
 
-#SBATCH --job-name=paralogs_TEST
-#SBATCH --partition=highmem
-#SBATCH --nodelist=node4
-# --account=project_group
-#SBATCH --cpus-per-task=2 
-#SBATCH --ntasks-per-node=4
-#SBATCH --mail-user=leo-paul.dagallier@ird.fr
+#SBATCH --job-name=paralogs_magnoliids
+#SBATCH --cpus-per-task=1 
+#SBATCH --ntasks-per-node=12
+#SBATCH --mail-user=andrew.j.helmstetter@gmail.com
 #SBATCH --mail-type=ALL
 
 ############################################################
@@ -36,9 +33,9 @@ echo "Directory from which sbatch was invoked: " $SLURM_SUBMIT_DIR
 #no duplicate taxa
 
 #recommend changing output directory depending on input dataset
-path_to_dir_in="/data3/projects/AFRODYN2/hybpiper_back_1590007/retrieved_par";
-path_to_dir_out="/home/helmstetter/paralog_back_$JOB_ID/";
-path_to_tmp="/scratch/helmstetter_$JOB_ID";
+path_to_dir_in="/data3/projects/AFRODYN2/magnoliids/hybpiper_magnoliids/retrieved_par";
+path_to_dir_out="/data3/projects/AFRODYN2/magnoliids/paralog_magnoliids_$SLURM_JOB_ID";
+path_to_tmp="/scratch/helmstetter_$SLURM_JOB_ID";
 
 #### Creation du repertoire temporaire sur noeud
 
@@ -111,7 +108,7 @@ echo "starting alignment";
 	ls -1 ./ | \
 		while read sample; do
 		  	echo "mafft --auto ${sample} > aligned.${sample}"
-		done | parallel -j4 #change depending on dataset size: has to be the same as --ntasks-per-node (parameter in SLURM configuration)
+		done | parallel -j12 #change depending on dataset size: has to be the same as --ntasks-per-node (parameter in SLURM configuration)
 echo "done alignment";
 
 # Gather the aligned combined fastas into a single directory and run RAxML
@@ -125,8 +122,8 @@ cd aligned_combined_fastas
 	#makes commands for all of the files in the folder and runs them in batches of jobs
 	ls -1 ./ | \
 		while read sample; do
-		  	echo "raxmlHPC-PTHREADS -f a -x 12345 -p 12345 -T 2 -# 100 -m GTRGAMMA -O -s ${sample} -n ${sample}" #change -T depending on dataset size: has to be the same as the --cpus-per-task parameter (in SLURM configuration)
-		done | parallel -j4 #change depending on dataset size: has to be the same as the --ntasks-per-node parameter (in SLURM configuration)
+		  	echo "raxmlHPC-PTHREADS -f a -x 12345 -p 12345 -T 1 -# 100 -m GTRGAMMA -O -s ${sample} -n ${sample}" #change -T depending on dataset size: has to be the same as the --cpus-per-task parameter (in SLURM configuration)
+		done | parallel -j12 #change depending on dataset size: has to be the same as the --ntasks-per-node parameter (in SLURM configuration)
 echo "done raxml";
 
 # Gather the RAxML trees into a single directory (to be transfered locally for plot_paralogs.R)
@@ -150,5 +147,5 @@ echo "done transfer";
 #### Remove tmp data on node
 
 echo "Deleting data on node";
-rm -rf $path_to_tmp
+#rm -rf $path_to_tmp
 echo "Done deleting, FINISHED!";
